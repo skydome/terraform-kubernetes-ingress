@@ -244,5 +244,3 @@ resource "kubernetes_service" "ingress_nginx" {
     external_traffic_policy = "Local"
   }
 }
-
-version = "0.0.2"
