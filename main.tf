@@ -1,35 +1,35 @@
 resource "kubernetes_config_map" "nginx_configuration" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "nginx-configuration"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
 }
 
 resource "kubernetes_config_map" "tcp_services" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "tcp-services"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
 }
 
 resource "kubernetes_config_map" "udp_services" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "udp-services"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
 }
 
 resource "kubernetes_service_account" "nginx_ingress_serviceaccount" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "nginx-ingress-serviceaccount"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
 }
@@ -72,10 +72,10 @@ resource "kubernetes_cluster_role" "nginx_ingress_clusterrole" {
 }
 
 resource "kubernetes_role" "nginx_ingress_role" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "nginx-ingress-role"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
   rule {
@@ -102,16 +102,16 @@ resource "kubernetes_role" "nginx_ingress_role" {
 }
 
 resource "kubernetes_role_binding" "nginx_ingress_role_nisa_binding" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "nginx-ingress-role-nisa-binding"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
   subject {
     kind      = "ServiceAccount"
     name      = "nginx-ingress-serviceaccount"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -121,15 +121,15 @@ resource "kubernetes_role_binding" "nginx_ingress_role_nisa_binding" {
 }
 
 resource "kubernetes_cluster_role_binding" "nginx_ingress_clusterrole_nisa_binding" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
-    name   = "${var.environments[count.index]}-nginx-ingress-clusterrole-nisa-binding"
+    name   = "${var.namespaces[count.index]}-nginx-ingress-clusterrole-nisa-binding"
     labels = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
   subject {
     kind      = "ServiceAccount"
     name      = "nginx-ingress-serviceaccount"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -139,14 +139,14 @@ resource "kubernetes_cluster_role_binding" "nginx_ingress_clusterrole_nisa_bindi
 }
 
 resource "kubernetes_deployment" "nginx_ingress_controller" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "nginx-ingress-controller"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
   spec {
-    replicas = "${var.replicacount}"
+    replicas = var.replicacount
     selector {
       match_labels = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
     }
@@ -224,10 +224,10 @@ resource "kubernetes_deployment" "nginx_ingress_controller" {
 }
 
 resource "kubernetes_service" "ingress_nginx" {
-  count = length(var.environments)
+  count = length(var.namespaces)
   metadata {
     name      = "ingress-nginx"
-    namespace = var.environments[count.index]
+    namespace = var.namespaces[count.index]
     labels    = { "app.kubernetes.io/name" = "ingress-nginx", "app.kubernetes.io/part-of" = "ingress-nginx" }
   }
   spec {

@@ -18,8 +18,12 @@ This module creates following resources;
 
 ## Inputs
 
-- **namespace**     : kubernetes namespace to be deployed
-- **replicacount**  : replica instance count for Ingress Controller
+- **namespaces::[string]**    : kubernetes namespaces to be deployed, **list** of namespaces
+- **replicacount**            : replica instance count for Ingress Controller
+
+## Outputs
+
+- **load_balancer_ip**        : list of LoadBalancer IPs from GKE
 
 ## Dependencies
 
