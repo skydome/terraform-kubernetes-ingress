@@ -28,7 +28,7 @@ Terraform Kubernetes Provider
 ## Tested With
 
 - terraform-providers/kubernetes : 1.9.0
-- mongodb:bionic(4.2) docker image
+- quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.1	docker image
 - kubernetes 1.13.7-gke.8
 
 ## Credits
